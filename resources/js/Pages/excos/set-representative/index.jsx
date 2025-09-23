@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from '@inertiajs/react'; 
+import { Link, Head } from '@inertiajs/react'; 
 import IndexNavbar from '@/Components/Navbar/Navbar';
 import PageHeader from '@/Components/Header/PageHeader';
 
@@ -248,9 +248,10 @@ const setReps = [
   },
 ]
 
-const Index = () => {
+const Index = ({ sets = [] }) => {
   return (
     <div className='bg-yellow-200 min-h-screen'>
+        <Head title="Set Representatives" />
         <IndexNavbar/>
         <PageHeader
           title={"Set Representatives"}/>
@@ -258,7 +259,7 @@ const Index = () => {
         <div className='p-20'>
         <div class="flex flex-wrap justify-center gap-5">
           {
-            setReps.map(({set}, index) => (
+            (sets.length ? sets : setReps.map(s=>s.set)).map((set, index) => (
               <div key={index} class="block p-6 rounded-lg shadow-lg bg-white max-w-sm text-center">
             <p class="text-gray-700 text-5xl font-primary mb-4">
               {set}

@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { JobButton, JobForm } from '../dashboard/job-board';
 import Admin from '@/Layouts/AdminLayout';
-import MyModal from '@/Components/Modal/Modal';
 import { useForm, router } from '@inertiajs/react';
 import DashboardTitle from '@/Components/Header/DashboardTitle';
-import { MagnifyingGlassIcon, FunnelIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import { MagnifyingGlassIcon, FunnelIcon, XMarkIcon, BriefcaseIcon } from '@heroicons/react/20/solid';
 import JobsCard from '@/Components/Cards/JobsCard';
 import { toast } from 'react-toastify';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../Components/ui/dialog';
 
 const Index = ({ jobs }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -93,20 +93,7 @@ const Index = ({ jobs }) => {
 
   return (
     <Admin>
-      <MyModal
-        isOpen={isOpen}
-        title={"Add Job Opening"}
-        body={
-          <JobForm 
-            data={data}
-            setData={setData}
-            errors={errors}
-            isSuccess={false}
-          />
-        }
-        button={<JobButton handleSubmit={handleSubmit} isLoading={isLoading} />}
-        closeModal={closeModal}
-      />
+
 
       <main className='md:p-10 p-5 space-y-8'>
         <div className='flex items-center justify-between'>
@@ -114,13 +101,31 @@ const Index = ({ jobs }) => {
             title={"Job Board Management"}
             subtitle={"Post job opportunities and manage existing listings"}
           />
+                <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger asChild>
           <button
-            onClick={() => setIsOpen(true)}
             className="bg-[#800000] hover:bg-[#700000] text-white px-6 py-3 rounded-lg transition-all duration-200 flex items-center gap-2 font-medium shadow-md hover:shadow-lg"
           >
-            <span>💼</span>
+            <BriefcaseIcon className='h-5 w-5' />
             Post New Job
           </button>
+        </DialogTrigger>
+        <DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto'>
+          <DialogHeader>
+            <DialogTitle>Add Job Opening</DialogTitle>
+            <DialogDescription>Fill out the form to post a new job opportunity.</DialogDescription>
+          </DialogHeader>
+          <JobForm 
+            data={data}
+            setData={setData}
+            errors={errors}
+            isSuccess={false}
+          />
+          <DialogFooter>
+            <JobButton handleSubmit={handleSubmit} isLoading={isLoading} />
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
         </div>
 
         {/* Search and Filter Section */}
@@ -215,9 +220,9 @@ const Index = ({ jobs }) => {
             {!searchTerm && (
               <button
                 onClick={() => setIsOpen(true)}
-                className="bg-[#800000] hover:bg-[#700000] text-white px-6 py-3 rounded-lg"
+                className="bg-[#800000] hover:bg-[#700000] text-white px-6 py-3 rounded-lg flex items-center gap-2"
               >
-                <span>💼</span>
+                <BriefcaseIcon className='h-5 w-5' />
                 Post First Job
               </button>
             )}

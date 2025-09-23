@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import Admin from '@/Layouts/AdminLayout';
 import DashboardTitle from '../../components/Header/DashboardTitle';
-import { SolidButton } from '../../components/Button/Button';
 import { toast } from 'react-toastify';
 
 const Settings = ({ data }) => {

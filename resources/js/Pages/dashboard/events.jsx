@@ -3,7 +3,6 @@ import { CalendarDaysIcon, CurrencyDollarIcon} from '@heroicons/react/24/outline
 import EventsTable from '../../components/Tables/EventsTable';
 import DashboardTitle from '../../components/Header/DashboardTitle';
 import moment from 'moment';
-import { imgHost } from '../../lib/imgHost';
 import { ScaleLoader } from 'react-spinners';
 import Authenticated from '@/Layouts/AuthenticatedLayout';
 
@@ -69,7 +68,7 @@ export default Index;
 const UpcomingEvents = ({title, description, image, date, reg_fee, register, loading, clicked}) => (
   <div className='bg-white flex gap-4 justify-between flex-col flex-shrink-0 shadow-lg p-4 w-64 rounded-lg'>
       <div className='space-y-3 '>
-        <img src={"/public/"+image} className='w-full sm:h-40 object-cover rounded'/>
+        <img src={image} className='w-full sm:h-40 object-cover rounded'/>
         <p className='font-manrope font-bold'>{title}</p>
         <p className='font-figtree text-xs'>{description}</p>
     

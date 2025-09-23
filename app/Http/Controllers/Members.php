@@ -76,11 +76,12 @@ class Members extends Controller
             'profession' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:255',
             'state' => 'nullable|string|max:255',
-            'password' => 'required|string|min:8',
+            'password' => 'nullable|string|min:8',
         ]);
 
         try {
             $user = User::create([
+                'member_id' => 'sjssaa'.substr($request->set, -2).rand(100, 999),
                 'firstName' => $request->firstName,
                 'lastName' => $request->lastName,
                 'email' => $request->email,
@@ -90,11 +91,13 @@ class Members extends Controller
                 'profession' => $request->profession,
                 'city' => $request->city,
                 'state' => $request->state,
-                'password' => Hash::make($request->password),
+                'password' => Hash::make($request->password) ?? Hash::make('12345678'),
             ]);
 
+            error_log(json_encode($user));
             return back()->with('success', 'Member created successfully!');
         } catch (\Exception $e) {
+            error_log($e->getMessage());
             return back()->with('error', 'Failed to create member: ' . $e->getMessage());
         }
     }
@@ -159,6 +162,26 @@ class Members extends Controller
             return back()->with('success', $message);
         } catch (\Exception $e) {
             return back()->with('error', 'Import failed: ' . $e->getMessage());
+        }
+    }
+
+    public function grantAdmin(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:users,id',
+        ]);
+
+        $user = User::find($request->id);
+        if (!$user) {
+            return back()->with('error', 'User not found');
+        }
+
+        try {
+            $user->role = 'admin';
+            $user->save();
+            return back()->with('success', 'Admin rights granted successfully');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Failed to grant admin rights: ' . $e->getMessage());
         }
     }
 }

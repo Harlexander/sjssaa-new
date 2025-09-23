@@ -4,6 +4,10 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Election;
 use App\Http\Controllers\Events;
+use App\Http\Controllers\ExecutiveController;
+use App\Http\Controllers\TrusteeController;
+use App\Http\Controllers\SetRepresentativeController;
+use App\Http\Controllers\Members as MembersController;
 use App\Http\Controllers\JobBoard;
 use App\Http\Controllers\Members;
 use App\Http\Controllers\News;
@@ -12,9 +16,6 @@ use App\Http\Controllers\Payment;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\Statistics;
-use App\Models\Events as ModelsEvents;
-use App\Models\Settings;
-use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -79,6 +80,23 @@ Route::middleware('auth')->group(function(){
     Route::get('/admin/payments', [Payment::class, 'getAdminPayments']);
     Route::get('/admin/events', [Events::class, 'getAdminEvents']);
     Route::get('/admin/news', [News::class, 'getAdminNews']);
+    Route::get('/admin/executives', [ExecutiveController::class, 'adminIndex']);
+    Route::post('/admin/executives', [ExecutiveController::class, 'store']);
+    Route::post('/admin/executives/{executive}', [ExecutiveController::class, 'update']);
+    Route::delete('/admin/executives/{executive}', [ExecutiveController::class, 'destroy']);
+    Route::patch('/admin/executives/{executive}/toggle', [ExecutiveController::class, 'toggle']);
+
+    Route::get('/admin/trustees', [TrusteeController::class, 'adminIndex']);
+    Route::post('/admin/trustees', [TrusteeController::class, 'store']);
+    Route::post('/admin/trustees/{trustee}', [TrusteeController::class, 'update']);
+    Route::delete('/admin/trustees/{trustee}', [TrusteeController::class, 'destroy']);
+    Route::patch('/admin/trustees/{trustee}/toggle', [TrusteeController::class, 'toggle']);
+
+    Route::get('/admin/set-representatives', [SetRepresentativeController::class, 'adminIndex']);
+    Route::post('/admin/set-representatives', [SetRepresentativeController::class, 'store']);
+    Route::post('/admin/set-representatives/{setRepresentative}', [SetRepresentativeController::class, 'update']);
+    Route::delete('/admin/set-representatives/{setRepresentative}', [SetRepresentativeController::class, 'destroy']);
+    Route::post('/admin/members/grant-admin', [MembersController::class, 'grantAdmin'])->name('admin.members.grant');
     Route::get('/admin/job-board', [JobBoard::class, 'getAdminJobs']);
     Route::get('/admin/settings', [SettingsController::class, 'settings']);
     Route::get('/admin/gallery', [SettingsController::class, 'gallery']);
@@ -99,18 +117,11 @@ Route::prefix("excos")->group(function(){
     Route::get("/web-master", function(){
         return Inertia::render('excos/web-master');
     });
-    Route::get("/national-executives", function(){
-        return Inertia::render('excos/national-executives');
-    });
-    Route::get("/board-of-trustees", function(){
-        return Inertia::render('excos/board-of-trustees');
-    });
-    Route::get("/set-representative", function(){
-        return Inertia::render('excos/set-representative/index');
-    });
-    Route::get("/set-representative/{set}", function($set){
-        return Inertia::render('excos/set-representative/set', ['set' => $set]);
-    });
+    Route::get("/national-executives", [ExecutiveController::class, 'publicIndex']);
+    Route::get("/board-of-trustees", [TrusteeController::class, 'publicIndex']);
+
+    Route::get("/set-representative", [SetRepresentativeController::class, 'publicIndex']);
+    Route::get("/set-representative/{set}", [SetRepresentativeController::class, 'publicShow']);
 });
 
 Route::get('/event', [Events::class, 'getEvents']);

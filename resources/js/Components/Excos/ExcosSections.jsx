@@ -1,14 +1,13 @@
 import React from 'react'
-import { SolidButton } from '../Button/Button'
 import Executive from './Executive'
 import SetRepsSection from './SetRepsSection'
 import Trustees from './Trustees'
 
-const ExcosSections = () => {
+const ExcosSections = ({ data : { executives, trustees } }) => {
   return (
     <div>
-        <Executive/>
-        <Trustees/>
+        <Executive executives={executives}/>
+        <Trustees trustees={trustees}/>
         <SetRepsSection/>
     </div>
   )

@@ -84,7 +84,7 @@ const Index = ({ auth: { user} }) => {
                 <CameraIcon className='h-7 text-white'/>
               </form>                
 
-                <img src={user.img ? (imgHost+user.img) : "https://cdn-icons-png.flaticon.com/512/149/149071.png"} className='rounded-full border-4 shadow-xl border-pry object-cover mx-auto h-72 w-72'/>
+                <img src={user.img ? (user.img) : "https://cdn-icons-png.flaticon.com/512/149/149071.png"} className='rounded-full border-4 shadow-xl border-pry object-cover mx-auto h-72 w-72'/>
               </div>
             </div>
             <div className='col-span-2 space-y-5'>

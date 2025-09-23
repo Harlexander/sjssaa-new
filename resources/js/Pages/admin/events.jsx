@@ -1,22 +1,21 @@
 import React, { useState, useMemo } from 'react';
 import Admin from '@/Layouts/AdminLayout';
 import DashboardTitle from '../../components/Header/DashboardTitle';
-import MyModal from '../../components/Modal/Modal';
 import { handleChange, handleImageChange } from '../../lib/handleInput';
-import { PhotoIcon, MagnifyingGlassIcon, FunnelIcon, XMarkIcon, CalendarIcon, PrinterIcon } from '@heroicons/react/24/solid';
+import { PhotoIcon, MagnifyingGlassIcon, FunnelIcon, XMarkIcon, CalendarIcon } from '@heroicons/react/24/solid';
 import { set } from '../../lib/set';
 import { ScaleLoader } from 'react-spinners';
 import BadgeSuccess from '../../components/Badge/BadgeSuccess';
 import { AdminEventsTable } from '../../components/Tables/EventsTable';
 import { router, useForm } from '@inertiajs/react';
 import { toast } from 'react-toastify';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../Components/ui/dialog';
 
 const Index = ({ events }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedType, setSelectedType] = useState('');
     const [selectedSet, setSelectedSet] = useState('');
-    const [isExporting, setIsExporting] = useState(false);
 
     const closeModal = () => {
         setIsOpen(false);
@@ -77,115 +76,50 @@ const Index = ({ events }) => {
     };
 
     const handleSubmit = () => {
+        console.log(data, errors)
         post(route('event.create'), {
             onSuccess: () => {
                 closeModal();
                 toast.success("Event created successfully! 🎉");
             },
-            onError: () => {
-                toast.error("Error creating event");
-            }
         });
     };
 
-    // CSV Export functionality
-    const exportToCSV = () => {
-        setIsExporting(true);
-        
-        try {
-            const eventsToExport = filteredEvents.length > 0 ? filteredEvents : (events.data || []);
-            
-            // Define CSV headers
-            const headers = [
-                'ID',
-                'Title',
-                'Type',
-                'Set',
-                'Registration Fee',
-                'Date',
-                'Description',
-                'Created At'
-            ];
-
-            // Prepare data rows
-            const csvData = eventsToExport.map(event => [
-                event.id || '',
-                event.title || '',
-                event.type || '',
-                event.set || '',
-                event.reg_fee || '0',
-                event.date || '',
-                event.description || '',
-                event.created_at || ''
-            ]);
-
-            // Create CSV content
-            const csvContent = [
-                headers.join(','),
-                ...csvData.map(row => 
-                    row.map(field => 
-                        typeof field === 'string' && field.includes(',') 
-                            ? `"${field.replace(/"/g, '""')}"` 
-                            : field
-                    ).join(',')
-                )
-            ].join('\n');
-
-            // Create and download file
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `events_export_${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            toast.success(`Successfully exported ${eventsToExport.length} events to CSV! 📊`);
-        } catch (error) {
-            console.error('Export error:', error);
-            toast.error('Error exporting events data');
-        } finally {
-            setIsExporting(false);
-        }
-    };
-
+    
     return (
         <Admin>
-            <MyModal
-                isOpen={isOpen}
-                title={"Create New Event"}
-                body={
-                    <Form 
-                        handleChange={(e) => handleChange(e, setData)}
-                        formValues={data}
-                        handleImageChange={(e) => handleImageChange(e, setData)}
-                        isSuccess={processing === false && errors.length === 0}
-                        errors={errors}
-                    />
-                }
-                button={
-                    <Button 
-                        handleSubmit={handleSubmit}
-                        isLoading={processing}
-                    />
-                }
-                closeModal={closeModal}
-            />
             <main className='p-5 sm:p-10 space-y-8'>
                 <div className='flex items-center justify-between'>
                     <DashboardTitle
                         title={"Event Management"}
                         subtitle={"Create and manage association events"}
                     />
+                                <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                <DialogTrigger asChild>
                     <button
-                        onClick={closeModal}
                         className="bg-[#800000] hover:bg-[#700000] text-white px-6 py-3 rounded-lg transition-all duration-200 flex items-center gap-2 font-medium shadow-md hover:shadow-lg"
                     >
                         <CalendarIcon className='h-5 w-5' />
                         Create Event
                     </button>
+                </DialogTrigger>
+                <DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto'>
+                    <DialogHeader>
+                        <DialogTitle>Create New Event</DialogTitle>
+                        <DialogDescription>Fill out the form to create a new event.</DialogDescription>
+                    </DialogHeader>
+                    <Form 
+                        handleChange={(e) => handleChange(e, setData)}
+                        formValues={data}
+                        handleImageChange={(e) => handleImageChange(e, setData)}
+                        isSuccess={processing === false && Object.keys(errors || {}).length === 0}
+                        errors={errors}
+                    />
+                    <DialogFooter>
+                        <Button handleSubmit={handleSubmit} isLoading={processing} />
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
                 </div>
 
                 {/* Enhanced Search and Filter Section */}
@@ -251,24 +185,7 @@ const Index = ({ events }) => {
                             </div>
                         </div>
 
-                        {/* Export Button */}
-                        <button
-                            onClick={exportToCSV}
-                            disabled={isExporting}
-                            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-all duration-200 flex items-center gap-2 font-medium shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {isExporting ? (
-                                <>
-                                    <div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin'></div>
-                                    <span>Exporting...</span>
-                                </>
-                            ) : (
-                                <>
-                                    <PrinterIcon className='h-5 w-5' />
-                                    <span>Export CSV</span>
-                                </>
-                            )}
-                        </button>
+                        {/* Export removed */}
 
                         {/* Clear Filters */}
                         {(searchTerm || selectedType || selectedSet) && (
@@ -344,23 +261,6 @@ const Button = ({ handleSubmit, isLoading }) => (
 const Form = ({ handleChange, formValues, handleImageChange, isSuccess, errors }) => {
     return (
         <div className='space-y-6 py-6 font-figtree'>
-            {isSuccess && (
-                <div className='bg-green-50 border border-green-200 rounded-lg p-4'>
-                    <BadgeSuccess
-                        message={"Event created successfully! Members can now register."}
-                    />
-                </div>
-            )}
-
-            {errors && (
-                <div className='bg-red-50 border border-red-200 rounded-lg p-4'>
-                    <div className='text-red-600 font-medium flex items-center gap-2'>
-                        <span>⚠️</span>
-                        {Object.values(errors)[0] || 'Please check your input and try again'}
-                    </div>
-                </div>
-            )}
-
             <div className='bg-blue-50 border border-blue-200 rounded-lg p-4'>
                 <p className='text-sm text-blue-800 flex items-center gap-2'>
                     <CalendarIcon className='h-4 w-4' />
@@ -379,9 +279,11 @@ const Form = ({ handleChange, formValues, handleImageChange, isSuccess, errors }
                         required
                         value={formValues.title}
                         onChange={handleChange}
+                        error={errors.title}
                         className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#800000] focus:border-transparent transition-all duration-200 font-figtree'
                         placeholder='Enter event title...'
                     />
+                    {errors.title && <p className='text-red-600 text-sm mt-1'>{errors.title}</p>}
                 </div>
 
                 <div className='space-y-2'>
@@ -393,6 +295,7 @@ const Form = ({ handleChange, formValues, handleImageChange, isSuccess, errors }
                         required
                         value={formValues.set}
                         onChange={handleChange}
+                        error={errors.set}
                         className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#800000] focus:border-transparent transition-all duration-200 font-figtree appearance-none bg-white'
                     >
                         <option value="">Select Set</option>
@@ -401,6 +304,7 @@ const Form = ({ handleChange, formValues, handleImageChange, isSuccess, errors }
                             <option key={item} value={item}>{item}</option>
                         ))}
                     </select>
+                    {errors.set && <p className='text-red-600 text-sm mt-1'>{errors.set}</p>}
                 </div>
             </div>
 
@@ -414,12 +318,14 @@ const Form = ({ handleChange, formValues, handleImageChange, isSuccess, errors }
                         required
                         value={formValues.type}
                         onChange={handleChange}
+                        error={errors.type}
                         className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#800000] focus:border-transparent transition-all duration-200 font-figtree appearance-none bg-white'
                     >
                         <option value="">Select Type</option>
                         <option value="free">🆓 Free Event</option>
                         <option value="paid">💰 Paid Event</option>
                     </select>
+                    {errors.type && <p className='text-red-600 text-sm mt-1'>{errors.type}</p>}
                 </div>
 
                 {formValues.type === "paid" && (
@@ -433,11 +339,13 @@ const Form = ({ handleChange, formValues, handleImageChange, isSuccess, errors }
                             required
                             value={formValues.reg_fee}
                             onChange={handleChange}
+                            error={errors.reg_fee}
                             className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#800000] focus:border-transparent transition-all duration-200 font-figtree'
                             placeholder='Enter amount...'
                             min="0"
                             step="0.01"
                         />
+                        {errors.reg_fee && <p className='text-red-600 text-sm mt-1'>{errors.reg_fee}</p>}
                     </div>
                 )}
             </div>
@@ -452,8 +360,10 @@ const Form = ({ handleChange, formValues, handleImageChange, isSuccess, errors }
                     required
                     value={formValues.date}
                     onChange={handleChange}
+                    error={errors.date}
                     className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#800000] focus:border-transparent transition-all duration-200 font-figtree'
                 />
+                {errors.date && <p className='text-red-600 text-sm mt-1'>{errors.date}</p>}
             </div>
 
             <div className='space-y-2'>
@@ -465,10 +375,12 @@ const Form = ({ handleChange, formValues, handleImageChange, isSuccess, errors }
                     required
                     value={formValues.description}
                     onChange={handleChange}
+                    error={errors.description}
                     className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#800000] focus:border-transparent transition-all duration-200 font-figtree resize-none'
                     placeholder='Enter detailed event description...'
                     rows={5}
                 ></textarea>
+                {errors.description && <p className='text-red-600 text-sm mt-1'>{errors.description}</p>}
             </div>
 
             <div className='space-y-2'>
@@ -507,6 +419,7 @@ const Form = ({ handleChange, formValues, handleImageChange, isSuccess, errors }
                             Select Image
                         </button>
                     </div>
+                    {errors.image && <p className='text-red-600 text-sm mt-1'>{errors.image}</p>}
                 </div>
             </div>
         </div>

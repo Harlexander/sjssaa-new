@@ -31,7 +31,8 @@ class User extends Authenticatable
         'profession',
         'city',
         'state',
-        'country'
+        'country',
+        'role'
     ];
 
     /**

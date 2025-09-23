@@ -9,6 +9,7 @@ import IndexNavbar from "@/Components/Navbar/Navbar";
 import ResponsilbiltySection from "@/Components/Responsibility/ResponsilbiltySection";
 
 export default function Index({ data }) {
+console.log(data);
 
   return (
     <>

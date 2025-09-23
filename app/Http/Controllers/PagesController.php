@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Events;
+use App\Models\Executive;
 use App\Models\Gallery;
 use App\Models\GalleryCategory;
 use App\Models\Settings;
+use App\Models\Trustee;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -18,6 +20,11 @@ class PagesController extends Controller
         $data->events = $events;
         $gallery = GalleryCategory::with("images")->limit(6)->get();
         $data->gallery = $gallery;
+
+        $executives = Executive::limit(3)->get();
+        $data->executives = $executives;
+        $trustees = Trustee::limit(3)->get();
+        $data->trustees = $trustees;
         return Inertia::render('Welcome', [ "data" => $data ]);
     }
 

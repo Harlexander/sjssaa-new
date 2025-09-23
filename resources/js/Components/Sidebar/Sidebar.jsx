@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '@inertiajs/react'; import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import { Link, router } from '@inertiajs/react'; import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
@@ -84,7 +84,7 @@ const Sidebar = ({navigation, userNavigation, logo}) => {
                             ))
                         }
                         <li className="relative">
-                            <a className="flex items-center gap-5 text-sm py-4 px-6 h-12 overflow-hidden text-white text-ellipsis whitespace-nowrap rounded hover:text-pry hover:bg-gray-200 transition duration-300 ease-in-out" href="#!" data-mdb-ripple="true" data-mdb-ripple-color="primary">
+                            < a onClick={() => router.post(route('logout'))} className="flex items-center gap-5 text-sm py-4 px-6 h-12 overflow-hidden text-white text-ellipsis whitespace-nowrap rounded hover:text-pry hover:bg-gray-200 transition duration-300 ease-in-out" href="#!" data-mdb-ripple="true" data-mdb-ripple-color="primary">
                             <FontAwesomeIcon icon={faSignOutAlt}/>
                                 <span>Sign Out</span>
                             </a>

@@ -1,56 +1,14 @@
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
+import { Head } from '@inertiajs/react'
 import IndexNavbar from '@/Components/Navbar/Navbar'
 import PageHeader from '@/Components/Header/PageHeader'
 
-const Index = () => {
-  const members = [
-    {
-      img : "../bot3.jpeg",
-      name : "Dr. Akinyele Akinlade",
-      position : "Chairman",
-      mail : "akin.akinlade@sjssaa.com"
-    },
-    {
-      img : "../bot4.jpeg",
-      name : "Mr. Tony Agbuagba",
-      position : "secretary",
-      mail : "tony.agbuagba@sjssaa.com"
-    },
-    {
-      img : "../bot5.jpeg",
-      name : "Mr. Kelechukwu Nwankwo",
-      position : "Member",
-      mail : ""
-    },
-    {
-      img : "../martins.png",
-      name : "Mr. Adewale Martins",
-      position : "Member",
-      mail : ""
-    },
-    {
-      img : "../brayon.png",
-      name : "Mr. Brayon Emeluwa",
-      position : "Member",
-      mail : ""
-    },
-    {
-      img : "../shosanya.png",
-      name : "Mr. Olayiwola Shosanya",
-      position : "Member",
-      mail : ""
-    },
-    {
-      img : "../bot2.jpeg",
-      name : "Mr. John Agwara Onyeukwu",
-      position : "Member",
-      mail : ""
-    },
-  ]
+const Index = ({ trustees = [] }) => {
   return (
     <div className='bg-yellow-200 min-h-screen'>
+        <Head title="Board Of Trustees" />
         <IndexNavbar/>
         <PageHeader
           title={"Board Of Trustees"}/>
@@ -59,11 +17,11 @@ const Index = () => {
          <div className='w-full md:px-32 py-20'>
           <div className='md:flex space-y-5 md:space-y-0 flex-wrap md:gap-10 justify-between'>
             {
-              members.map(({mail, position, name, img}, index) => (
+              trustees.map(({email, position, name, image}, index) => (
                 <TrusteeContainer
                 key={index}
-                  img={img}
-                  mail={mail}
+                  img={image}
+                  mail={email}
                   name={name}
                   position={position}/>
               ))

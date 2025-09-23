@@ -1,4 +1,5 @@
-import { Link } from '@inertiajs/react'; import React from 'react'
+import { Link } from '@inertiajs/react'; 
+import React from 'react'
 
 export const OutlineButton = ({title,href="",  additionalClass}) => {
   return (
@@ -7,9 +8,9 @@ export const OutlineButton = ({title,href="",  additionalClass}) => {
         {title}
       </button>   
     </Link>
-
   )
 }
+
 export const SolidButton = ({href = "", onClick, title, additionalClass}) => {
   return (
   <Link href={href}>

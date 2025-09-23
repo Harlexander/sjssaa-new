@@ -1,13 +1,14 @@
 import React, { useState, useMemo } from 'react'
 import Admin from '@/Layouts/AdminLayout';
 import { MagnifyingGlassIcon, PrinterIcon, FunnelIcon, XMarkIcon, UserGroupIcon, PlusIcon, DocumentArrowUpIcon } from '@heroicons/react/24/outline'
-import MembersTable from '../../components/Tables/MembersTable'
+import MembersDataTable from '../../Components/members/Table'
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/20/solid'
 import DashboardTitle from '../../components/Header/DashboardTitle'
 import { set } from '../../lib/set'
 import { filterBySet, searchByName } from '../../lib/searchFunction'
 import { toast } from 'react-toastify';
 import { useForm } from '@inertiajs/react';
+import CreateDialog from '@/Components/members/CreateDialog'
 import {
   Dialog,
   DialogContent,
@@ -19,11 +20,9 @@ import {
 } from '../../Components/ui/dialog';
 
 const Index = ({ data }) => {
-    const [ current, setCurrent ] = useState(1);
     const [ searchTerm, setSearchTerm ] = useState('');
     const [ selectedSet, setSelectedSet ] = useState('');
     const [ isExporting, setIsExporting ] = useState(false);
-    const [ isImporting, setIsImporting ] = useState(false);
 
     // Filter and search members
     const filteredMembers = useMemo(() => {
@@ -73,20 +72,6 @@ const Index = ({ data }) => {
     const { data: importData, setData: setImportData, post: importMembers, processing: importingMembers, errors: importErrors, reset: resetImportForm } = useForm({
         file: null,
     });
-
-    const handleCreateMember = (e) => {
-        e.preventDefault();
-        createMember('/admin/members/create', {
-            onSuccess: () => {
-                toast.success('Member created successfully! 🎉');
-                resetForm();
-            },
-            onError: () => {
-                toast.error('Failed to create member. Please check the form.');
-            }
-        });
-    };
-
     const handleImportMembers = (e) => {
         e.preventDefault();
         if (!importData.file) {
@@ -183,198 +168,7 @@ const Index = ({ data }) => {
                     subtitle={"Manage and verify association members"}
                 />
                 <div className='flex items-center gap-3'>
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-all duration-200 flex items-center gap-2 font-medium shadow-md hover:shadow-lg">
-                                <PlusIcon className='h-5 w-5' />
-                                <span>Add Member</span>
-                            </button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                            <DialogHeader>
-                                <DialogTitle className="flex items-center gap-2">
-                                    <PlusIcon className="h-6 w-6 text-green-600" />
-                                    Create New Member
-                                </DialogTitle>
-                                <DialogDescription>
-                                    Add a new member to the association. Fill in all required fields.
-                                </DialogDescription>
-                            </DialogHeader>
-                            
-                            <form onSubmit={handleCreateMember} className="space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-semibold text-gray-700">
-                                            First Name *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={formData.firstName}
-                                            onChange={(e) => setFormData('firstName', e.target.value)}
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                                            placeholder="Enter first name"
-                                            required
-                                        />
-                                        {createErrors.firstName && <p className="text-sm text-red-500">{createErrors.firstName}</p>}
-                                    </div>
-                                    
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-semibold text-gray-700">
-                                            Last Name *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={formData.lastName}
-                                            onChange={(e) => setFormData('lastName', e.target.value)}
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                                            placeholder="Enter last name"
-                                            required
-                                        />
-                                        {createErrors.lastName && <p className="text-sm text-red-500">{createErrors.lastName}</p>}
-                                    </div>
-                                    
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-semibold text-gray-700">
-                                            Email *
-                                        </label>
-                                        <input
-                                            type="email"
-                                            value={formData.email}
-                                            onChange={(e) => setFormData('email', e.target.value)}
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                                            placeholder="Enter email address"
-                                            required
-                                        />
-                                        {createErrors.email && <p className="text-sm text-red-500">{createErrors.email}</p>}
-                                    </div>
-                                    
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-semibold text-gray-700">
-                                            Mobile *
-                                        </label>
-                                        <input
-                                            type="tel"
-                                            value={formData.mobile}
-                                            onChange={(e) => setFormData('mobile', e.target.value)}
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                                            placeholder="Enter mobile number"
-                                            required
-                                        />
-                                        {createErrors.mobile && <p className="text-sm text-red-500">{createErrors.mobile}</p>}
-                                    </div>
-                                    
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-semibold text-gray-700">
-                                            Set *
-                                        </label>
-                                        <select
-                                            value={formData.set}
-                                            onChange={(e) => setFormData('set', e.target.value)}
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                                            required
-                                        >
-                                            <option value="">Select a set</option>
-                                            {set.map((setItem) => (
-                                                <option value={setItem} key={setItem}>{setItem}</option>
-                                            ))}
-                                        </select>
-                                        {createErrors.set && <p className="text-sm text-red-500">{createErrors.set}</p>}
-                                    </div>
-                                    
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-semibold text-gray-700">
-                                            Country
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={formData.country}
-                                            onChange={(e) => setFormData('country', e.target.value)}
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                                            placeholder="Enter country"
-                                        />
-                                        {createErrors.country && <p className="text-sm text-red-500">{createErrors.country}</p>}
-                                    </div>
-                                    
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-semibold text-gray-700">
-                                            Profession
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={formData.profession}
-                                            onChange={(e) => setFormData('profession', e.target.value)}
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                                            placeholder="Enter profession"
-                                        />
-                                        {createErrors.profession && <p className="text-sm text-red-500">{createErrors.profession}</p>}
-                                    </div>
-                                    
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-semibold text-gray-700">
-                                            City
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={formData.city}
-                                            onChange={(e) => setFormData('city', e.target.value)}
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                                            placeholder="Enter city"
-                                        />
-                                        {createErrors.city && <p className="text-sm text-red-500">{createErrors.city}</p>}
-                                    </div>
-                                    
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-semibold text-gray-700">
-                                            State
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={formData.state}
-                                            onChange={(e) => setFormData('state', e.target.value)}
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                                            placeholder="Enter state"
-                                        />
-                                        {createErrors.state && <p className="text-sm text-red-500">{createErrors.state}</p>}
-                                    </div>
-                                    
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-semibold text-gray-700">
-                                            Password *
-                                        </label>
-                                        <input
-                                            type="password"
-                                            value={formData.password}
-                                            onChange={(e) => setFormData('password', e.target.value)}
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                                            placeholder="Enter password (min 8 characters)"
-                                            required
-                                        />
-                                        {createErrors.password && <p className="text-sm text-red-500">{createErrors.password}</p>}
-                                    </div>
-                                </div>
-                                
-                                <DialogFooter>
-                                    <button
-                                        type="submit"
-                                        disabled={creatingMember}
-                                        className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl transition-all duration-200 font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                                    >
-                                        {creatingMember ? (
-                                            <>
-                                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                                Creating...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <PlusIcon className="h-5 w-5" />
-                                                Create Member
-                                            </>
-                                        )}
-                                    </button>
-                                </DialogFooter>
-                            </form>
-                        </DialogContent>
-                    </Dialog>
+                    <CreateDialog />
                     
                     <Dialog>
                         <DialogTrigger asChild>
@@ -548,12 +342,7 @@ const Index = ({ data }) => {
                         Member Directory
                     </h3>
                 </div>
-                
-                <MembersTable 
-                    data={filteredMembers} 
-                    isLoading={false} 
-                    admin={true}
-                />
+                <MembersDataTable rows={filteredMembers} />
             </div>
 
         </main>
