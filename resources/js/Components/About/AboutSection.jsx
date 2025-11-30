@@ -10,7 +10,7 @@ const AboutSection = ({ data }) => {
 
         <p className='text-center whitespace-pre-line'>{data.about_us}</p>
         <div className='flex justify-center gap-1 md:gap-5'>
-        <a href="/constitution.pdf">         
+        <a href="/constitution-updated.pdf">         
           <button className={`bg-[#800000]  px-8 py-1 text-white`}>
             Constitution
           </button>
