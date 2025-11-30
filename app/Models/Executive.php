@@ -13,7 +13,7 @@ class Executive extends Model
         'bio',
         'image',
         'order',
-        'is_active',
+        'is_active'
     ];
 
     protected $casts = [

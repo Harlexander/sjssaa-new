@@ -10,12 +10,8 @@ const AboutSection = ({ data }) => {
 
         <p className='text-center whitespace-pre-line'>{data.about_us}</p>
         <div className='flex justify-center gap-1 md:gap-5'>
-        <Link download="SJSSAA Constitution" href={"./constitution.pdf" }>
-          <SolidButton title={"Constitution"}  additionalClass={` font-primary md:text-2xl px-8 py-1`}/>
-        </Link>
-        <Link download="strategic-plan" href={"./strategic-plan.pdf" }>
-            <SolidButton title={"Strategic Plan"}  additionalClass={` font-primary md:text-2xl px-8 py-1`}/>
-        </Link>
+            <SolidButton href={"/constitution.pdf"} title={"Constitution"}  additionalClass={` font-primary md:text-2xl px-8 py-1`}/>
+            <SolidButton href={"/strategic-plan.pdf"} title={"Strategic Plan"}  additionalClass={` font-primary md:text-2xl px-8 py-1`}/>
         </div>        
       </Slide>
 
