@@ -1,7 +1,7 @@
 import React from 'react'
 import { SolidButton } from '../Button/Button'
 import { Slide } from 'react-awesome-reveal'
-import { Link } from '@inertiajs/react'; 
+
 const AboutSection = ({ data }) => {
   return (
     <div className="space-y-9 md:px-60 pt-20 px-5 pb-24 bg-yellow-100">
