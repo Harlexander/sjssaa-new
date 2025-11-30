@@ -1,1 +1,0 @@
-import{j as e}from"./app-CgK7TKDC.js";const s=({title:t})=>e.jsx("div",{className:"bg-[#800000] text-white py-12 md:py-20 flex justify-center items-center",children:e.jsx("div",{children:e.jsx("p",{className:"font-primary capitalize text-center text-3xl md:text-5xl",children:t})})});export{s as P};
